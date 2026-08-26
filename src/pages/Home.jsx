@@ -7,7 +7,7 @@ import useWeather from "../hooks/useWeather";
 function Home() {
   const {
     weather,
-    loading,
+    status,
     error,
     searchWeather,
   } = useWeather();
@@ -22,11 +22,15 @@ function Home() {
 
         <SearchBar onSearch={searchWeather} />
 
-        {loading && <Loading />}
+        {status === "loading" && <Loading />}
 
-        {error && <ErrorMessage message={error} />}
+        {status === "error" && (
+          <ErrorMessage message={error} />
+        )}
 
-        <WeatherCard weather={weather} />
+        {status === "success" && (
+          <WeatherCard weather={weather} />
+        )}
 
       </div>
     </div>

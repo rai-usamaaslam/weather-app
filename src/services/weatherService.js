@@ -1,17 +1,30 @@
-const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+import {
+  WEATHER_API_URL,
+  WEATHER_API_KEY,
+} from "../config/api";
 
-export async function getWeather(city) {
-  const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-      city
-    )}&appid=${API_KEY}&units=metric`
-  );
+import { apiClient } from "./apiClient";
 
-  const data = await response.json();
+export async function getWeather(city, signal) {
+  const url = new URL(WEATHER_API_URL);
 
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch weather");
-  }
+  url.searchParams.set("q", city);
+  url.searchParams.set("appid", WEATHER_API_KEY);
+  url.searchParams.set("units", "metric");
 
-  return data;
+  const data = await apiClient(url, {
+    signal,
+  });
+
+  return {
+    city: data.name,
+    country: data.sys.country,
+    temperature: data.main.temp,
+    feelsLike: data.main.feels_like,
+    humidity: data.main.humidity,
+    pressure: data.main.pressure,
+    windSpeed: data.wind.speed,
+    description: data.weather[0].description,
+    icon: data.weather[0].icon,
+  };
 }
