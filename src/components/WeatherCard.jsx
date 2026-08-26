@@ -1,9 +1,3 @@
-import {
-  formatTemperature,
-  formatWindSpeed,
-  capitalizeText,
-} from "../utils/weatherUtils";
-
 function WeatherCard({ weather }) {
   if (!weather) {
     return null;
@@ -12,12 +6,12 @@ function WeatherCard({ weather }) {
   return (
     <div className="weather-card">
       <div className="weather-header">
-        <div>
+        <div className="weather-location">
           <h2>
             {weather.city}, {weather.country}
           </h2>
 
-          <p>{capitalizeText(weather.description)}</p>
+          <p>{weather.description}</p>
         </div>
 
         <img
@@ -27,11 +21,9 @@ function WeatherCard({ weather }) {
       </div>
 
       <div className="temperature">
-        <h1>{formatTemperature(weather.temperature)}</h1>
+        <h1>{Math.round(weather.temperature)}°C</h1>
 
-        <p>
-          Feels like {formatTemperature(weather.feelsLike)}
-        </p>
+        <p>Feels like {Math.round(weather.feelsLike)}°C</p>
       </div>
 
       <div className="weather-details">
@@ -44,7 +36,7 @@ function WeatherCard({ weather }) {
         <div>
           <span>💨</span>
           <p>Wind</p>
-          <strong>{formatWindSpeed(weather.windSpeed)}</strong>
+          <strong>{weather.windSpeed} m/s</strong>
         </div>
 
         <div>
