@@ -7,15 +7,15 @@ function useWeather() {
   const [error, setError] = useState("");
 
   async function searchWeather(city) {
-    try {
-      setLoading(true);
-      setError("");
-      setWeather(null);
+    setLoading(true);
+    setError("");
 
+    try {
       const data = await getWeather(city);
 
       setWeather(data);
     } catch (error) {
+      setWeather(null);
       setError(error.message);
     } finally {
       setLoading(false);

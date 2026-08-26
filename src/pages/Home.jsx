@@ -1,21 +1,34 @@
 import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
+import Loading from "../components/Loading";
+import ErrorMessage from "../components/ErrorMessage";
 import useWeather from "../hooks/useWeather";
 
 function Home() {
-  const { weather, loading, error, searchWeather } = useWeather();
+  const {
+    weather,
+    loading,
+    error,
+    searchWeather,
+  } = useWeather();
 
   return (
-    <div>
-      <h1>Weather App</h1>
+    <div className="app">
+      <div className="weather-container">
 
-      <SearchBar onSearch={searchWeather} />
+        <h1 className="title">
+          Weather App
+        </h1>
 
-      {loading && <p>Loading...</p>}
+        <SearchBar onSearch={searchWeather} />
 
-      {error && <p>{error}</p>}
+        {loading && <Loading />}
 
-      <WeatherCard weather={weather} />
+        {error && <ErrorMessage message={error} />}
+
+        <WeatherCard weather={weather} />
+
+      </div>
     </div>
   );
 }
