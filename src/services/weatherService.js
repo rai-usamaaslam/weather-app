@@ -5,9 +5,12 @@ export async function getWeather(city) {
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
   );
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("City not found");
+    console.log("API ERROR:", data);
+    throw new Error(data.message || "Weather request failed");
   }
 
-  return response.json();
+  return data;
 }
