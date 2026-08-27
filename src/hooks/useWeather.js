@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { getWeather } from "../services/weatherService";
+
+import {
+  getWeather,
+  getWeatherByLocation,
+} from "../services/weatherService";
 
 function useWeather() {
   const [weather, setWeather] = useState(null);
@@ -8,13 +12,20 @@ function useWeather() {
 
   const controllerRef = useRef(null);
 
-  async function searchWeather(city) {
+  function createController() {
     if (controllerRef.current) {
       controllerRef.current.abort();
     }
 
     const controller = new AbortController();
+
     controllerRef.current = controller;
+
+    return controller;
+  }
+
+  async function searchWeather(city) {
+    const controller = createController();
 
     setStatus("loading");
     setError("");
@@ -22,6 +33,36 @@ function useWeather() {
     try {
       const data = await getWeather(
         city,
+        controller.signal
+      );
+
+      setWeather(data);
+      setStatus("success");
+    } catch (error) {
+      if (error.name === "AbortError") {
+        return;
+      }
+
+      setWeather(null);
+      setError(error.message);
+      setStatus("error");
+    } finally {
+      if (!controller.signal.aborted) {
+        controllerRef.current = null;
+      }
+    }
+  }
+
+  async function searchByLocation(latitude, longitude) {
+    const controller = createController();
+
+    setStatus("loading");
+    setError("");
+
+    try {
+      const data = await getWeatherByLocation(
+        latitude,
+        longitude,
         controller.signal
       );
 
@@ -53,6 +94,7 @@ function useWeather() {
     status,
     error,
     searchWeather,
+    searchByLocation,
   };
 }
 

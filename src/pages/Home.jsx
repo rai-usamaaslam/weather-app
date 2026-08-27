@@ -2,7 +2,11 @@ import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
+import RecentCities from "../components/RecentCities";
+import LocationButton from "../components/LocationButton";
+
 import useWeather from "../hooks/useWeather";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 function Home() {
   const {
@@ -10,7 +14,28 @@ function Home() {
     status,
     error,
     searchWeather,
+    searchByLocation,
   } = useWeather();
+
+  const [recentCities, setRecentCities] =
+    useLocalStorage("recentCities", []);
+
+  async function handleSearch(city) {
+    await searchWeather(city);
+
+    setRecentCities((previousCities) => {
+      const filteredCities = previousCities.filter(
+        (item) =>
+          item.toLowerCase() !== city.toLowerCase()
+      );
+
+      return [city, ...filteredCities].slice(0, 5);
+    });
+  }
+
+  function handleLocation(latitude, longitude) {
+    searchByLocation(latitude, longitude);
+  }
 
   return (
     <div className="app">
@@ -20,7 +45,20 @@ function Home() {
           Weather App
         </h1>
 
-        <SearchBar onSearch={searchWeather} />
+        <SearchBar
+          onSearch={handleSearch}
+          disabled={status === "loading"}
+        />
+
+        <LocationButton
+          onLocation={handleLocation}
+          disabled={status === "loading"}
+        />
+
+        <RecentCities
+          cities={recentCities}
+          onSelect={handleSearch}
+        />
 
         {status === "loading" && <Loading />}
 

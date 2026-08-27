@@ -1,34 +1,59 @@
 import { useState } from "react";
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, disabled }) {
   const [city, setCity] = useState("");
+  const [inputError, setInputError] = useState("");
 
   function handleSearch() {
-    if (city.trim() === "") {
+    const trimmedCity = city.trim();
+
+    if (!trimmedCity) {
+      setInputError("Please enter a city name");
       return;
     }
 
-    onSearch(city.trim());
+    setInputError("");
+    onSearch(trimmedCity);
     setCity("");
   }
 
-  return (
-    <div className="search-bar">
-      <input
-        type="text"
-        placeholder="Enter city name"
-        value={city}
-        onChange={(event) => setCity(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            handleSearch();
-          }
-        }}
-      />
+  function handleChange(event) {
+    setCity(event.target.value);
 
-      <button onClick={handleSearch}>
-        Search
-      </button>
+    if (inputError) {
+      setInputError("");
+    }
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  }
+
+  return (
+    <div>
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Enter city name"
+          value={city}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+        />
+
+        <button
+          onClick={handleSearch}
+          disabled={disabled}
+        >
+          {disabled ? "Searching..." : "Search"}
+        </button>
+      </div>
+
+      {inputError && (
+        <p className="error">{inputError}</p>
+      )}
     </div>
   );
 }
