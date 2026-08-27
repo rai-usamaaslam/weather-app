@@ -1,9 +1,17 @@
+import { useState } from "react";
+
 function LocationButton({ onLocation, disabled }) {
+  const [locationError, setLocationError] = useState("");
+
   function handleLocation() {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      setLocationError(
+        "Geolocation is not supported by your browser."
+      );
       return;
     }
+
+    setLocationError("");
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -11,20 +19,58 @@ function LocationButton({ onLocation, disabled }) {
 
         onLocation(latitude, longitude);
       },
-      () => {
-        alert("Unable to get your location.");
+
+      (error) => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError(
+              "Location permission was denied. Please allow location access."
+            );
+            break;
+
+          case error.POSITION_UNAVAILABLE:
+            setLocationError(
+              "Your location could not be determined."
+            );
+            break;
+
+          case error.TIMEOUT:
+            setLocationError(
+              "Location request timed out. Please try again."
+            );
+            break;
+
+          default:
+            setLocationError(
+              "Unable to get your location."
+            );
+        }
       },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
     );
   }
 
   return (
-    <button
-      className="location-button"
-      onClick={handleLocation}
-      disabled={disabled}
-    >
-      📍 Use My Location
-    </button>
+    <div>
+      <button
+        className="location-button"
+        onClick={handleLocation}
+        disabled={disabled}
+      >
+        📍 {disabled ? "Getting Weather..." : "Use My Location"}
+      </button>
+
+      {locationError && (
+        <p className="error">
+          {locationError}
+        </p>
+      )}
+    </div>
   );
 }
 

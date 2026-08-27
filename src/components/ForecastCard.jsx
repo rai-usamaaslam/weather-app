@@ -4,14 +4,11 @@ import {
 } from "../utils/weatherUtils";
 
 function ForecastCard({ item }) {
-  const date = new Date(item.dt * 1000);
+  const date = new Date(`${item.date}T12:00:00`);
 
-  const day = date.toLocaleDateString(
-    "en-US",
-    {
-      weekday: "short",
-    }
-  );
+  const day = date.toLocaleDateString("en-US", {
+    weekday: "short",
+  });
 
   return (
     <div className="forecast-card">
@@ -21,18 +18,22 @@ function ForecastCard({ item }) {
       </p>
 
       <img
-        src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-        alt={item.weather[0].description}
+        src={`https://openweathermap.org/img/wn/${item.icon}@2x.png`}
+        alt={item.description}
       />
 
-      <h3>
-        {formatTemperature(item.main.temp)}
-      </h3>
+      <div className="forecast-temperatures">
+        <strong>
+          {formatTemperature(item.high)}
+        </strong>
+
+        <span>
+          {formatTemperature(item.low)}
+        </span>
+      </div>
 
       <p>
-        {capitalizeText(
-          item.weather[0].description
-        )}
+        {capitalizeText(item.description)}
       </p>
 
     </div>

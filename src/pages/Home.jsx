@@ -6,7 +6,10 @@ import RecentCities from "../components/RecentCities";
 import LocationButton from "../components/LocationButton";
 import Forecast from "../components/Forecast";
 
-import useWeather from "../hooks/useWeather";
+import {
+  useWeatherContext,
+} from "../context/WeatherContext";
+
 import useLocalStorage from "../hooks/useLocalStorage";
 
 function Home() {
@@ -18,7 +21,7 @@ function Home() {
     forecastError,
     searchWeather,
     searchByLocation,
-  } = useWeather();
+  } = useWeatherContext();
 
   const [recentCities, setRecentCities] =
     useLocalStorage("recentCities", []);

@@ -17,7 +17,7 @@ function Forecast({ forecast }) {
       <div className="forecast-list">
         {dailyForecast.map((item) => (
           <ForecastCard
-            key={item.dt}
+            key={item.date}
             item={item}
           />
         ))}
