@@ -349,3 +349,48 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+.forecast {
+  margin-top: 30px;
+}
+
+.forecast h2 {
+  margin-bottom: 15px;
+}
+
+.forecast-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.forecast-card {
+  padding: 15px 10px;
+  border-radius: 14px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+.forecast-card p {
+  margin: 5px 0;
+  color: #64748b;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.forecast-card img {
+  width: 55px;
+  height: 55px;
+}
+
+.forecast-card h3 {
+  margin: 5px 0;
+  font-size: 20px;
+}
+
+@media (max-width: 600px) {
+  .forecast-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

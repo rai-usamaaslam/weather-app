@@ -1,13 +1,23 @@
+import {
+  formatTemperature,
+  capitalizeText,
+} from "../utils/weatherUtils";
+
 function ForecastCard({ item }) {
   const date = new Date(item.dt * 1000);
+
+  const day = date.toLocaleDateString(
+    "en-US",
+    {
+      weekday: "short",
+    }
+  );
 
   return (
     <div className="forecast-card">
 
-      <p>
-        {date.toLocaleDateString("en-US", {
-          weekday: "short",
-        })}
+      <p className="forecast-day">
+        {day}
       </p>
 
       <img
@@ -16,11 +26,13 @@ function ForecastCard({ item }) {
       />
 
       <h3>
-        {Math.round(item.main.temp)}°C
+        {formatTemperature(item.main.temp)}
       </h3>
 
       <p>
-        {item.weather[0].description}
+        {capitalizeText(
+          item.weather[0].description
+        )}
       </p>
 
     </div>

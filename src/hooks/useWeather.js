@@ -3,12 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import {
   getWeather,
   getWeatherByLocation,
+  getForecast,
 } from "../services/weatherService";
 
 function useWeather() {
   const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState([]);
+
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [forecastError, setForecastError] = useState("");
 
   const controllerRef = useRef(null);
 
@@ -29,21 +33,43 @@ function useWeather() {
 
     setStatus("loading");
     setError("");
+    setForecastError("");
+    setWeather(null);
+    setForecast([]);
 
     try {
-      const data = await getWeather(
-        city,
-        controller.signal
-      );
+      const results = await Promise.allSettled([
+        getWeather(city, controller.signal),
+        getForecast(city, controller.signal),
+      ]);
 
-      setWeather(data);
+      const weatherResult = results[0];
+      const forecastResult = results[1];
+
+      // Current weather is required
+      if (weatherResult.status === "rejected") {
+        throw weatherResult.reason;
+      }
+
+      setWeather(weatherResult.value);
       setStatus("success");
+
+      // Forecast is optional
+      if (forecastResult.status === "fulfilled") {
+        setForecast(forecastResult.value);
+      } else {
+        setForecast([]);
+        setForecastError(
+          "Forecast is currently unavailable."
+        );
+      }
     } catch (error) {
       if (error.name === "AbortError") {
         return;
       }
 
       setWeather(null);
+      setForecast([]);
       setError(error.message);
       setStatus("error");
     } finally {
@@ -58,22 +84,45 @@ function useWeather() {
 
     setStatus("loading");
     setError("");
+    setForecastError("");
+    setWeather(null);
+    setForecast([]);
 
     try {
-      const data = await getWeatherByLocation(
-        latitude,
-        longitude,
-        controller.signal
-      );
+      const weatherData =
+        await getWeatherByLocation(
+          latitude,
+          longitude,
+          controller.signal
+        );
 
-      setWeather(data);
+      setWeather(weatherData);
       setStatus("success");
+
+      try {
+        const forecastData = await getForecast(
+          weatherData.city,
+          controller.signal
+        );
+
+        setForecast(forecastData);
+      } catch (forecastError) {
+        if (forecastError.name === "AbortError") {
+          return;
+        }
+
+        setForecast([]);
+        setForecastError(
+          "Forecast is currently unavailable."
+        );
+      }
     } catch (error) {
       if (error.name === "AbortError") {
         return;
       }
 
       setWeather(null);
+      setForecast([]);
       setError(error.message);
       setStatus("error");
     } finally {
@@ -91,8 +140,10 @@ function useWeather() {
 
   return {
     weather,
+    forecast,
     status,
     error,
+    forecastError,
     searchWeather,
     searchByLocation,
   };

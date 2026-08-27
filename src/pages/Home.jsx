@@ -4,6 +4,7 @@ import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import RecentCities from "../components/RecentCities";
 import LocationButton from "../components/LocationButton";
+import Forecast from "../components/Forecast";
 
 import useWeather from "../hooks/useWeather";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -11,8 +12,10 @@ import useLocalStorage from "../hooks/useLocalStorage";
 function Home() {
   const {
     weather,
+    forecast,
     status,
     error,
+    forecastError,
     searchWeather,
     searchByLocation,
   } = useWeather();
@@ -67,7 +70,19 @@ function Home() {
         )}
 
         {status === "success" && (
-          <WeatherCard weather={weather} />
+          <>
+            <WeatherCard weather={weather} />
+
+            {forecastError && (
+              <p className="error">
+                {forecastError}
+              </p>
+            )}
+
+            {!forecastError && (
+              <Forecast forecast={forecast} />
+            )}
+          </>
         )}
 
       </div>
