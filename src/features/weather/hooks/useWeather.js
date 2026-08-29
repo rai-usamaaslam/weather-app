@@ -46,7 +46,6 @@ function useWeather() {
       const weatherResult = results[0];
       const forecastResult = results[1];
 
-      // Current weather is required
       if (weatherResult.status === "rejected") {
         throw weatherResult.reason;
       }
@@ -54,24 +53,24 @@ function useWeather() {
       setWeather(weatherResult.value);
       setStatus("success");
 
-      // Forecast is optional
       if (forecastResult.status === "fulfilled") {
         setForecast(forecastResult.value);
       } else {
         setForecast([]);
-        setForecastError(
-          "Forecast is currently unavailable."
-        );
+        setForecastError("Forecast is currently unavailable.");
       }
+
+      return true;
     } catch (error) {
-      if (error.name === "AbortError") {
-        return;
+      if (error?.name === "AbortError") {
+        return false;
       }
 
       setWeather(null);
       setForecast([]);
-      setError(error.message);
+      setError(error?.message || "Unable to load weather data.");
       setStatus("error");
+      return false;
     } finally {
       if (!controller.signal.aborted) {
         controllerRef.current = null;
@@ -89,12 +88,11 @@ function useWeather() {
     setForecast([]);
 
     try {
-      const weatherData =
-        await getWeatherByLocation(
-          latitude,
-          longitude,
-          controller.signal
-        );
+      const weatherData = await getWeatherByLocation(
+        latitude,
+        longitude,
+        controller.signal,
+      );
 
       setWeather(weatherData);
       setStatus("success");
@@ -102,29 +100,30 @@ function useWeather() {
       try {
         const forecastData = await getForecast(
           weatherData.city,
-          controller.signal
+          controller.signal,
         );
 
         setForecast(forecastData);
       } catch (forecastError) {
-        if (forecastError.name === "AbortError") {
-          return;
+        if (forecastError?.name === "AbortError") {
+          return false;
         }
 
         setForecast([]);
-        setForecastError(
-          "Forecast is currently unavailable."
-        );
+        setForecastError("Forecast is currently unavailable.");
       }
+
+      return true;
     } catch (error) {
-      if (error.name === "AbortError") {
-        return;
+      if (error?.name === "AbortError") {
+        return false;
       }
 
       setWeather(null);
       setForecast([]);
-      setError(error.message);
+      setError(error?.message || "Unable to load weather data.");
       setStatus("error");
+      return false;
     } finally {
       if (!controller.signal.aborted) {
         controllerRef.current = null;
