@@ -32,17 +32,11 @@ export function groupForecastByDay(forecast) {
       let low = Infinity;
 
       items.forEach((item) => {
-        high = Math.max(
-          high,
-          item.main.temp_max
-        );
-
-        low = Math.min(
-          low,
-          item.main.temp_min
-        );
+        high = Math.max(high, item.main.temp_max);
+        low = Math.min(low, item.main.temp_min);
       });
 
+      // Use the forecast closest to midday for icon/description
       const representative =
         items.find((item) => {
           const hour = new Date(

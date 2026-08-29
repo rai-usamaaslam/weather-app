@@ -20,64 +20,39 @@ function formatWeather(data) {
   };
 }
 
-export async function getWeather(
-  city,
-  signal
-) {
+export async function getWeather(city, signal) {
   const url = new URL(WEATHER_API_URL);
 
   url.searchParams.set("q", city);
-  url.searchParams.set(
-    "appid",
-    WEATHER_API_KEY
-  );
+  url.searchParams.set("appid", WEATHER_API_KEY);
   url.searchParams.set("units", "metric");
 
-  const data = await apiClient(url, {
-    signal,
-  });
+  const data = await apiClient(url, { signal });
 
   return formatWeather(data);
 }
 
-export async function getWeatherByLocation(
-  latitude,
-  longitude,
-  signal
-) {
+export async function getWeatherByLocation(latitude, longitude, signal) {
   const url = new URL(WEATHER_API_URL);
 
   url.searchParams.set("lat", latitude);
   url.searchParams.set("lon", longitude);
-  url.searchParams.set(
-    "appid",
-    WEATHER_API_KEY
-  );
+  url.searchParams.set("appid", WEATHER_API_KEY);
   url.searchParams.set("units", "metric");
 
-  const data = await apiClient(url, {
-    signal,
-  });
+  const data = await apiClient(url, { signal });
 
   return formatWeather(data);
 }
 
-export async function getForecast(
-  city,
-  signal
-) {
+export async function getForecast(city, signal) {
   const url = new URL(FORECAST_API_URL);
 
   url.searchParams.set("q", city);
-  url.searchParams.set(
-    "appid",
-    WEATHER_API_KEY
-  );
+  url.searchParams.set("appid", WEATHER_API_KEY);
   url.searchParams.set("units", "metric");
 
-  const data = await apiClient(url, {
-    signal,
-  });
+  const data = await apiClient(url, { signal });
 
   return data.list;
 }

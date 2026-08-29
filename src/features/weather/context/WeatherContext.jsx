@@ -1,8 +1,4 @@
-import {
-  createContext,
-  useContext,
-} from "react";
-
+import { createContext, useContext } from "react";
 import useWeather from "../hooks/useWeather";
 
 const WeatherContext = createContext(null);

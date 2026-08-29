@@ -1,33 +1,19 @@
 export async function apiClient(url, options = {}) {
-  let response;
-
   try {
-    response = await fetch(url, options);
+    const response = await fetch(url, options);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong");
+    }
+
+    return data;
   } catch (error) {
     if (error.name === "AbortError") {
       throw error;
     }
 
-    throw new Error(
-      "Network error. Please check your internet connection."
-    );
+    throw new Error(error.message || "Network error");
   }
-
-  let data;
-
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error(
-      "Invalid response from weather service."
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Something went wrong."
-    );
-  }
-
-  return data;
 }
