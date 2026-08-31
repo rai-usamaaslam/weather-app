@@ -101,7 +101,7 @@ function Home() {
               <span className="location-dot" />
               {weather
                 ? `${weather.city}, ${weather.country}`
-                : "Brooklyn, New York, USA"}
+                : "Isalmabad , Capital, Pakistan"}
             </div>
 
             <button type="button" className="download-button">
